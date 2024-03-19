@@ -1,0 +1,8 @@
+.code * {
+  border: none !important;
+  outline: none !important;
+}
+
+.codeWrapper:focus-within {
+  outline: 1px solid var(--mantine-color-blue-8);
+}
