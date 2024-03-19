@@ -2,8 +2,9 @@ import { Container, Text, Title, Table, Flex, Pagination, Button } from '@mantin
 import { CodeHighlight } from '@mantine/code-highlight';
 import { useState } from 'react';
 import { useElementSize } from '@mantine/hooks';
-import classes from './Table.module.css';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import classes from './Table.module.css';
 
 export function TableComp() {
   const [activePage, setPage] = useState(1);
@@ -108,43 +109,63 @@ export function TableComp() {
   return (
     <Container maw="90%" mb={100}>
       <Flex direction="column" gap={28}>
-        <Flex justify="space-between" align="center" w="100%" mt={32}>
-          <Title className={classes.title} ta="center" fw={600}>
-            <Text
-              inherit
-              variant="gradient"
-              component="span"
-              gradient={{ from: 'pink', to: 'yellow' }}
-            >
-              TUF
-            </Text>{' '}
-            Submissions
-          </Title>
-          <Button component={Link} to="/" variant="gradient" size="sm">
-            Submit Another
-          </Button>
-        </Flex>
-        <Flex
-          direction="column"
-          style={{
-            borderRadius: '.75rem',
-            border: '1px solid var(--mantine-color-dark-4)',
-          }}
+        <motion.div
+          initial={{ opacity: 0, translateY: 10 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          <Table verticalSpacing="sm" horizontalSpacing="md" highlightOnHover>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Username</Table.Th>
-                <Table.Th>Language</Table.Th>
-                <Table.Th>Stdin</Table.Th>
-                <Table.Th>Timestamp</Table.Th>
-                <Table.Th ref={ref}>Code</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>{rows}</Table.Tbody>
-          </Table>
-        </Flex>
-        <Pagination mx="auto" total={100} value={activePage} onChange={setPage} mt="sm" />
+          <Flex justify="space-between" align="center" w="100%" mt={32}>
+            <Title className={classes.title} ta="center" fw={600}>
+              <Text
+                inherit
+                variant="gradient"
+                component="span"
+                gradient={{ from: 'pink', to: 'yellow' }}
+              >
+                TUF
+              </Text>{' '}
+              Submissions
+            </Title>
+            <Button component={Link} to="/" variant="gradient" size="sm">
+              Submit Another
+            </Button>
+          </Flex>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Flex
+            direction="column"
+            style={{
+              borderRadius: '.75rem',
+              border: '1px solid var(--mantine-color-dark-4)',
+            }}
+          >
+            <Table verticalSpacing="sm" horizontalSpacing="md" highlightOnHover>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Username</Table.Th>
+                  <Table.Th>Language</Table.Th>
+                  <Table.Th>Stdin</Table.Th>
+                  <Table.Th>Timestamp</Table.Th>
+                  <Table.Th ref={ref}>Code</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>{rows}</Table.Tbody>
+            </Table>
+          </Flex>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Flex>
+            <Pagination mx="auto" total={100} value={activePage} onChange={setPage} mt="sm" />
+          </Flex>
+        </motion.div>
       </Flex>
     </Container>
   );
