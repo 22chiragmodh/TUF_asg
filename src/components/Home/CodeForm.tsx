@@ -2,6 +2,9 @@ import React from 'react';
 import Editor from 'react-simple-code-editor';
 // @ts-ignore
 import { highlight, languages } from 'prismjs/components/prism-core';
+import { useNavigate } from 'react-router-dom';
+import { notifications } from '@mantine/notifications';
+import useSWRMutation from 'swr/mutation';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-javascript';
@@ -12,6 +15,8 @@ import { motion } from 'framer-motion';
 import { Button, Flex, ScrollArea, Select, Text, Textarea, TextInput, Title } from '@mantine/core';
 import { useForm, isNotEmpty } from '@mantine/form';
 import styles from './CodeForm.module.css';
+import { API_CONSTANTS } from '@/utils/api.constants';
+import { genericMutationFetcher } from '@/utils/swr.helper';
 
 const languageOptions = [
   {
@@ -54,9 +59,20 @@ const languageToPrism = {
   java: languages.java,
 };
 
+interface IFormValues {
+  username: string;
+  preferredCodeLanguage: string;
+  stdin: string;
+}
+
 export function CodeForm() {
   const [code, setCode] = React.useState('');
-  const form = useForm({
+  const navigate = useNavigate(0);
+  const { trigger, isMutating } = useSWRMutation(
+    API_CONSTANTS.SUBMIT_SNIPPET,
+    genericMutationFetcher
+  );
+  const form = useForm<IFormValues>({
     initialValues: {
       username: '',
       preferredCodeLanguage: languageOptions[0].value,
@@ -69,6 +85,33 @@ export function CodeForm() {
     },
   });
 
+  const handleSubmit = async (values: IFormValues) => {
+    try {
+      await trigger({
+        type: 'post',
+        rest: [
+          {
+            username: values.username,
+            language: values.preferredCodeLanguage,
+            stdin: values.stdin,
+            code,
+          },
+        ],
+      });
+      navigate('/submissions');
+      notifications.show({
+        title: 'Code submitted successfully',
+        message: 'Check your submissions',
+      });
+    } catch (error) {
+      console.error('Error submitting code', error);
+      notifications.show({
+        title: 'Error submitting code',
+        message: 'Please try again',
+        color: 'red',
+      });
+    }
+  };
   return (
     <motion.div
       initial={{ opacity: 0, translateY: 20 }}
@@ -94,7 +137,7 @@ export function CodeForm() {
       >
         <Title order={2}>Submit your code</Title>
         <form
-          onSubmit={form.onSubmit((values) => console.log(values))}
+          onSubmit={form.onSubmit(handleSubmit)}
           style={{
             width: '100%',
           }}
